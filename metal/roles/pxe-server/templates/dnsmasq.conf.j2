@@ -1,0 +1,17 @@
+port = 0
+
+log-dhcp
+log-queries
+
+enable-tftp
+tftp-root = /srv/tftp
+
+dhcp-no-override
+
+{% for host in groups['metal'] %}
+{%- set tag = hostvars[host].inventory_hostname -%}  
+dhcp-host = {{hostvars[host].mac}}, set:{{tag}}
+dhcp-boot = tag:{{tag}}, pxelinux.0, pxeserver, {{ansible_default_ipv4.address}}
+dhcp-range = tag:{{tag}}, {{ansible_default_ipv4.network}}, proxy
+pxe-service = tag:{{tag}}, X86PC, “Boot from network”, pxelinux
+{% endfor %}

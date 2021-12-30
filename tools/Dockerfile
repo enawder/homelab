@@ -2,4 +2,9 @@ FROM archlinux
 
 RUN yes | pacman --sync --refresh \
     ansible \
-    make
+    docker \
+    ipmitool \
+    make \
+    python-pip
+
+RUN pip install docker

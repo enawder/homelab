@@ -1,0 +1,19 @@
+---
+- name: start pxe server
+  hosts: localhost
+  roles:
+    - pxe-server
+
+- name: ensure booting through network
+  hosts: metal:&ipmi
+  gather_facts: false
+  tasks:
+    - name: ensure booting throgh network
+      command: "ipmitool -H {{bmc.ip}} -U {{bmc.user}} -P {{bmc.password}} chassis bootdev pxe"
+      delegate_to: localhost
+
+- name: wake up bare metal hosts
+  hosts: metal
+  gather_facts: false
+  roles:
+    - wake

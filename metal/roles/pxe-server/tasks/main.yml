@@ -1,0 +1,49 @@
+---
+- name: create pxe server directories
+  file:
+    path: "{{lookup('vars', 'pxe_server_' + item + '_path')}}"
+    recurse: true
+    state: directory
+  loop:
+    - "target"
+    - "config"
+    - "iso"
+    - "os"
+
+- name: download network boot image
+  vars:
+    iso_url: "{{pxe_server_boot_image_url}}"
+  get_url:
+    url: "{{iso_url}}"
+    dest: "{{pxe_server_iso_path}}/{{iso_url | basename}}"
+    checksum: "{{pxe_server_boot_image_checksum}}"
+
+- name: unarchive network boot image
+  unarchive:
+    src: "{{pxe_server_iso_path}}/{{pxe_server_boot_image_url | basename}}"
+    dest: "{{pxe_server_os_path}}"
+
+- name: render dnsmasq config
+  template:
+    src: "dnsmasq.conf.j2"
+    dest: "{{pxe_server_config_path}}/dnsmasq.conf"
+  register: dnsmasq_config
+
+- name: start dnsmasq container
+  docker_container:
+    name: dnsmasq
+    image: andyshinn/dnsmasq
+    pull: true
+    #auto_remove: true
+    network_mode: host
+    state: started
+    restart: "{{dnsmasq_config.changed}}"
+    command:
+      - "--no-daemon"
+      - "--conf-file=/opt/dnsmasq.conf"
+      - "--dhcp-broadcast"
+    capabilities:
+      - net_admin
+    volumes:
+      - "{{pxe_server_config_path}}/dnsmasq.conf:/opt/dnsmasq.conf"
+      - "{{pxe_server_os_path}}:/srv/tftp"

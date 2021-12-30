@@ -1,0 +1,5 @@
+---
+pxe_server_distribution: debian
+pxe_server_distribution_version: bullseye
+pxe_server_boot_image_url: "https://deb.debian.org/{{pxe_server_distribution}}/dists/{{pxe_server_distribution_version}}/main/installer-amd64/current/images/netboot/netboot.tar.gz"
+pxe_server_boot_image_checksum: "sha256:04efe11bb7fdd5d9fd850b19d03163bc9a8c6b6a7da875bb68b883697119caec"

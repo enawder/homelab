@@ -1,0 +1,5 @@
+---
+pxe_server_target_path: "{{role_path}}/target"
+pxe_server_config_path: "{{pxe_server_target_path}}/config"
+pxe_server_iso_path: "{{pxe_server_target_path}}/iso"
+pxe_server_os_path: "{{pxe_server_target_path}}/os"

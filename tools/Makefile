@@ -1,6 +1,7 @@
 .POSIX:
 
 TAG = homelab-tools
+PROJECT_DIR = ${shell pwd}/..
 
 default: build run
 
@@ -13,6 +14,7 @@ run:
 		--interactive \
 		--tty \
 		--network host \
-		--volume "${shell pwd}/..:/home" \
-		--workdir "/home" \
+		--volume "${PROJECT_DIR}:${PROJECT_DIR}" \
+		--volume "/var/run/docker.sock:/var/run/docker.sock" \
+		--workdir "${PROJECT_DIR}" \
 		${TAG}

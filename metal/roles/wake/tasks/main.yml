@@ -1,0 +1,5 @@
+---
+- name: send wake on lan magic packet
+  wakeonlan:
+    mac: "{{hostvars[inventory_hostname]['mac']}}"
+  delegate_to: localhost
