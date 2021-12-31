@@ -3,3 +3,10 @@ pxe_server_distribution: debian
 pxe_server_distribution_version: bullseye
 pxe_server_boot_image_url: "https://deb.debian.org/{{pxe_server_distribution}}/dists/{{pxe_server_distribution_version}}/main/installer-amd64/current/images/netboot/netboot.tar.gz"
 pxe_server_boot_image_checksum: "sha256:04efe11bb7fdd5d9fd850b19d03163bc9a8c6b6a7da875bb68b883697119caec"
+
+pxe_server_syslinux_base_url: "https://mirrors.edge.kernel.org/pub/linux/utils/boot/syslinux"
+pxe_server_syslinux_version: "6.03"
+pxe_server_syslinux_package_name: "syslinux-{{pxe_server_syslinux_version}}"
+pxe_server_syslinux_package: "{{pxe_server_syslinux_package_name}}.tar.xz"
+pxe_server_syslinux_url: "{{pxe_server_syslinux_base_url}}/{{pxe_server_syslinux_package}}"
+pxe_server_syslinux_checksum: "sha256:{{pxe_server_syslinux_base_url}}/sha256sums.asc"

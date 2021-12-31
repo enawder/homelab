@@ -23,7 +23,35 @@
     src: "{{pxe_server_iso_path}}/{{pxe_server_boot_image_url | basename}}"
     dest: "{{pxe_server_os_path}}"
 
-- name: render dnsmasq config
+- name: download syslinux package
+  get_url:
+    url: "{{pxe_server_syslinux_url}}"
+    dest: "{{pxe_server_target_path}}"
+    checksum: "{{pxe_server_syslinux_checksum}}"
+
+- name: unarchive syslinux package
+  unarchive:
+    src: "{{pxe_server_target_path}}/{{pxe_server_syslinux_package}}"
+    dest: "{{pxe_server_target_path}}"
+
+- name: copy pxe bootloader
+  copy:
+    src: "{{pxe_server_target_path}}/{{pxe_server_syslinux_package_name}}/bios/core/lpxelinux.0"
+    dest: "{{pxe_server_os_path}}/debian-installer/amd64/lpxelinux.0"
+
+- name: create symbolic link to pxe bootloader
+  file:
+    src: "debian-installer/amd64/lpxelinux.0"
+    dest: "{{pxe_server_os_path}}/lpxelinux.0"
+    state: link
+
+- name: render pxe menu configuration
+  template:
+    src: "menu.cfg.j2"
+    dest: "{{pxe_server_os_path}}/debian-installer/amd64/boot-screens/menu.cfg"
+    backup: true
+
+- name: render dnsmasq configuration
   template:
     src: "dnsmasq.conf.j2"
     dest: "{{pxe_server_config_path}}/dnsmasq.conf"
@@ -47,3 +75,14 @@
     volumes:
       - "{{pxe_server_config_path}}/dnsmasq.conf:/opt/dnsmasq.conf"
       - "{{pxe_server_os_path}}:/srv/tftp"
+
+- name: start nginx server
+  docker_container:
+    name: nginx-server
+    image: nginx:alpine
+    pull: true
+    #auto_remove: true
+    network_mode: host
+    state: started
+    volumes:
+      - "{{pxe_server_os_path}}:/usr/share/nginx/html"

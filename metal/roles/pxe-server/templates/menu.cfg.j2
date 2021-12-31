@@ -1,0 +1,11 @@
+menu hshift 13
+menu width 49
+menu margin 8
+menu tabmsg
+
+menu title Debian GNU/Linux installer menu (BIOS mode)
+label install
+  menu label ^Install
+  kernel http://{{ansible_default_ipv4.address}}/debian-installer/amd64/linux
+  append vga=788 initrd=http://{{ansible_default_ipv4.address}}/debian-installer/amd64/initrd.gz
+menu end
