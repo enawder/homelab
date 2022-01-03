@@ -8,6 +8,7 @@
     - "target"
     - "config"
     - "iso"
+    - "log"
     - "os"
 
 - name: download network boot image
@@ -57,6 +58,11 @@
     dest: "{{pxe_server_config_path}}/dnsmasq.conf"
   register: dnsmasq_config
 
+- name: ensure dnsmasq log file exists
+  file:
+    path: "{{pxe_server_log_path}}/dnsmasq.log"
+    state: touch
+
 - name: start dnsmasq container
   docker_container:
     name: dnsmasq
@@ -75,6 +81,7 @@
     volumes:
       - "{{pxe_server_config_path}}/dnsmasq.conf:/opt/dnsmasq.conf"
       - "{{pxe_server_os_path}}:/srv/tftp"
+      - "{{pxe_server_log_path}}/dnsmasq.log:/var/log/dnsmasq.log"
 
 - name: start nginx server
   docker_container:
