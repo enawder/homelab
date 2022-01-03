@@ -65,7 +65,7 @@
 
 - name: start dnsmasq container
   docker_container:
-    name: dnsmasq
+    name: homelab-pxe-dnsmasq
     image: andyshinn/dnsmasq
     pull: true
     #auto_remove: true
@@ -83,9 +83,9 @@
       - "{{pxe_server_os_path}}:/srv/tftp"
       - "{{pxe_server_log_path}}/dnsmasq.log:/var/log/dnsmasq.log"
 
-- name: start nginx server
+- name: start nginx container
   docker_container:
-    name: nginx-server
+    name: homelab-pxe-nginx
     image: nginx:alpine
     pull: true
     #auto_remove: true

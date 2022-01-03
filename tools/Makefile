@@ -17,4 +17,5 @@ run:
 		--volume "${PROJECT_DIR}:${PROJECT_DIR}" \
 		--volume "/var/run/docker.sock:/var/run/docker.sock" \
 		--workdir "${PROJECT_DIR}" \
+		--name "homelab-tools" \
 		${TAG}
