@@ -5,6 +5,7 @@ RUN yes | pacman --sync --refresh \
     docker \
     ipmitool \
     make \
+    openssh \
     python-pip
 
 RUN pip install docker
