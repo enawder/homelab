@@ -1,4 +1,16 @@
 ---
+- name: create ssh directory
+  file:
+    path: "~/.ssh"
+    state: directory
+    mode: 0700
+
+- name: generate ssh key
+  openssh_keypair:
+    path: "{{ansible_ssh_private_key_file}}"
+    type: ed25519
+    state: present
+
 - name: create pxe server directories
   file:
     path: "{{lookup('vars', 'pxe_server_' + item + '_path')}}"
@@ -46,11 +58,15 @@
     dest: "{{pxe_server_os_path}}/lpxelinux.0"
     state: link
 
-- name: render pxe menu configuration
+- name: render pxelinux configuration
   template:
-    src: "menu.cfg.j2"
-    dest: "{{pxe_server_os_path}}/debian-installer/amd64/boot-screens/menu.cfg"
-    backup: true
+    src: "pxelinux.cfg.j2"
+    dest: "{{pxe_server_os_path}}/debian-installer/amd64/pxelinux.cfg/default"
+
+- name: render debian preseed file
+  template:
+    src: "preseed.cfg.j2"
+    dest: "{{pxe_server_os_path}}/preseed.cfg"
 
 - name: render dnsmasq configuration
   template:
