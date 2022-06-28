@@ -17,3 +17,12 @@
   gather_facts: false
   roles:
     - wake
+
+- hosts: metal
+  gather_facts: false
+  tasks:
+    - name: wait for host to be reachable
+      wait_for_connection:
+        delay: 900
+        timeout: 120
+      any_errors_fatal: true
