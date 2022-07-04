@@ -6,6 +6,7 @@ RUN yes | pacman --sync --refresh \
     ipmitool \
     make \
     openssh \
-    python-pip
+    python-pip \
+    vagrant
 
 RUN pip install docker

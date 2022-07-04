@@ -14,3 +14,6 @@ proxmox: requirements
 	@ansible-playbook \
 		--inventory hosts.yml \
 		proxmox.yml
+
+dev:
+	@vagrant up

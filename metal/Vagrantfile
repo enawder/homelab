@@ -1,0 +1,38 @@
+require 'yaml'
+
+inventory_path = File.join(__dir__, 'inventories/development/hosts.yml')
+inventory = YAML.load_file(inventory_path)
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/debian11"
+  config.vm.box_version = "4.0.2"
+
+  inventory['all']['hosts'].each do |host, host_vars|
+    config.vm.define host do |node|
+      node.vm.hostname = host
+      node.vm.network "private_network",
+        ip: host_vars['ansible_host'],
+        libvirt__netmask: "255.255.255.0"
+    end
+  end
+
+  #config.vm.provider :virtualbox do |vbox|
+    #vbox.gui = false
+    #vbox.cpus = 1
+    #vbox.memory = 8192
+    #vbox.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+  #end
+
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.cpus = 1
+    libvirt.memory = 8192
+    libvirt.nested = true
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.inventory_path = inventory_path
+    ansible.limit = "all"
+    ansible.galaxy_role_file = "requirements.yml"
+    ansible.playbook = "proxmox.yml"
+  end
+end
