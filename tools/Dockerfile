@@ -6,6 +6,7 @@ RUN yes | pacman --sync --refresh \
     ipmitool \
     make \
     openssh \
+    packer \
     python-pip \
     vagrant
 

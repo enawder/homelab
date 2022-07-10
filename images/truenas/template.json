@@ -1,0 +1,42 @@
+{
+  "variables": {
+    "truenas_version": "12.0"
+  },
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [
+        "<enter><wait25s>",
+        "<enter><wait5s>",
+        "<spacebar><wait2s><enter><wait>",
+        "<enter><wait>",
+        "root<down>",
+        "root<down>",
+        "<enter><wait>",
+        "<enter><wait4m>",
+        "<enter><wait2s>",
+        "<down><down><down><enter>"
+      ],
+      "boot_wait": "10s",
+      "communicator": "none",
+      "cpus": "2",
+      "disk_interface": "virtio",
+      "disk_size": "16G",
+      "display": "sdl",
+      "format": "qcow2",
+      "headless": false,
+      "iso_checksum": "sha256:68c9a49d8072afc58475c9a2ece2b04beac0cabe40d970fa96da1c0833aa1935",
+      "iso_url": "https://download.freenas.org/{{ user `truenas_version`}}/STABLE/RELEASE/x64/TrueNAS-{{ user `truenas_version` }}-RELEASE.iso",
+      "memory": "8192",
+      "output_directory": "{{template_dir}}/output/{{build_name}}",
+      "type": "qemu",
+      "vm_name": "truenas-12.0-template"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "{{template_dir}}/output/manifest.json"
+    }
+  ]
+}
