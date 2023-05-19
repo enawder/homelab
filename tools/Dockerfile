@@ -10,4 +10,4 @@ RUN yes | pacman --sync --refresh \
     python-pip \
     vagrant
 
-RUN pip install docker
+RUN pip install "requests==2.29.0" docker
