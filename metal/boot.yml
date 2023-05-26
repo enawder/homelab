@@ -9,7 +9,11 @@
   gather_facts: false
   tasks:
     - name: ensure booting throgh network
-      command: "ipmitool -H {{bmc.ip}} -U {{bmc.user}} -P {{bmc.password}} chassis bootdev pxe"
+      vars:
+        options: "valid,{{'efiboot' if bios == 'uefi'}}"
+      command: >
+        ipmitool -H {{bmc.ip}} -U {{bmc.user}} -P {{bmc.password}}
+        chassis bootdev pxe options={{options}}
       delegate_to: localhost
 
 - name: wake up bare metal hosts
