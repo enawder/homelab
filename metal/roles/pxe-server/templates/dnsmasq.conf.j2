@@ -9,10 +9,14 @@ tftp-root = /srv/tftp
 
 dhcp-no-override
 
+dhcp-match=set:x86PC, option:client-arch, 0
+dhcp-match=set:UEFI64, option:client-arch, 7
+
 {% for host in groups['metal'] %}
 {%- set tag = hostvars[host].inventory_hostname -%}  
 dhcp-host = {{hostvars[host].mac}}, set:{{tag}}
 dhcp-boot = tag:{{tag}}, lpxelinux.0, pxeserver, {{ansible_default_ipv4.address}}
 dhcp-range = tag:{{tag}}, {{ansible_default_ipv4.network}}, proxy
-pxe-service = tag:{{tag}}, X86PC, “Boot from network”, lpxelinux
 {% endfor %}
+
+pxe-service=tag:x86PC, X86PC, "BIOS Network Boot", lpxelinux
