@@ -1,24 +1,24 @@
-{%- set user = hostvars['server'].ansible_user -%}
+{%- set user = hostvars[item].ansible_user -%}
 
 #_preseed_V1
 #### Contents of the preconfiguration file (for bullseye)
 ### Localization
-d-i debian-installer/language string {{hostvars['server'].language}}
-d-i debian-installer/country string {{hostvars['server'].country}}
-d-i debian-installer/locale string {{hostvars['server'].locale}}
+d-i debian-installer/language string {{hostvars[item].language}}
+d-i debian-installer/country string {{hostvars[item].country}}
+d-i debian-installer/locale string {{hostvars[item].locale}}
 
 # Keyboard selection.
-d-i keyboard-configuration/xkb-keymap select {{hostvars['server'].keyboard}} 
+d-i keyboard-configuration/xkb-keymap select {{hostvars[item].keyboard}}
 
 ### Network configuration
 d-i preseed/early_command string kill-all-dhcp; netcfg
 
 # netcfg will choose an interface that has link if possible. This makes it
 # skip displaying a list if there is more than one interface.
-d-i netcfg/choose_interface select auto
+#d-i netcfg/choose_interface select auto
 
 # To pick a particular interface instead:
-#d-i netcfg/choose_interface select eth1
+d-i netcfg/choose_interface select {{hostvars[item].interface}}
 
 # If you prefer to configure the network manually, uncomment this line and
 # the static network configuration below.
@@ -33,7 +33,7 @@ d-i netcfg/dhcp_options select Configure network manually
 # Static network configuration.
 #
 # IPv4 example
-d-i netcfg/get_ipaddress string {{hostvars['server'].ansible_host}}
+d-i netcfg/get_ipaddress string {{hostvars[item].ansible_host}}
 d-i netcfg/get_netmask string {{hostvars['localhost'].ansible_default_ipv4.netmask}}
 d-i netcfg/get_gateway string {{hostvars['localhost'].ansible_default_ipv4.gateway}}
 d-i netcfg/get_nameservers string {{hostvars['localhost'].ansible_default_ipv4.gateway}}
@@ -42,13 +42,13 @@ d-i netcfg/confirm_static boolean true
 # Any hostname and domain names assigned from dhcp take precedence over
 # values set here. However, setting the values still prevents the questions
 # from being shown, even if values come from dhcp.
-d-i netcfg/get_hostname string {{hostvars['server'].inventory_hostname}}
+d-i netcfg/get_hostname string {{hostvars[item].inventory_hostname}}
 d-i netcfg/get_domain string homelab
 
 # If you want to force a hostname, regardless of what either the DHCP
 # server returns or what the reverse DNS entry for the IP is, uncomment
 # and adjust the following line.
-d-i netcfg/hostname string {{hostvars['server'].inventory_hostname}}
+d-i netcfg/hostname string {{hostvars[item].inventory_hostname}}
 
 # Disable that annoying WEP key dialog.
 d-i netcfg/wireless_wep string
@@ -121,6 +121,7 @@ d-i clock-setup/ntp boolean true
 # and not e.g. /dev/discs/disc0/disc).
 # For example, to use the first SCSI/SATA hard disk:
 d-i partman-auto/disk string /dev/sda
+
 # In addition, you'll need to specify the method to use.
 # The presently available methods are:
 # - regular: use the usual partition types for your architecture
