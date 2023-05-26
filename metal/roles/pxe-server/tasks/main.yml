@@ -58,15 +58,30 @@
     dest: "{{pxe_server_os_path}}/lpxelinux.0"
     state: link
 
+- name: set pxe format mac address fact
+  set_fact:
+    pxe_mac: "01-{{hostvars[item].mac | replace (':', '-')}}"
+  delegate_to: "{{item}}"
+  delegate_facts: true
+  loop: "{{groups['metal']}}"
+
 - name: render pxelinux configuration
   template:
     src: "pxelinux.cfg.j2"
-    dest: "{{pxe_server_os_path}}/debian-installer/amd64/pxelinux.cfg/default"
+    dest: "{{pxe_server_os_path}}/debian-installer/amd64/pxelinux.cfg/{{hostvars[item].pxe_mac}}"
+  loop: "{{groups['metal']}}"
+
+- name: create preseed configuration directory
+  file:
+    path: "{{pxe_server_os_path}}/preseed.cfg"
+    recurse: true
+    state: directory
 
 - name: render debian preseed file
   template:
     src: "preseed.cfg.j2"
-    dest: "{{pxe_server_os_path}}/preseed.cfg"
+    dest: "{{pxe_server_os_path}}/preseed.cfg/{{hostvars[item].pxe_mac}}"
+  loop: "{{groups['metal']}}"
 
 - name: render dnsmasq configuration
   template:
@@ -84,6 +99,7 @@
     name: homelab-pxe-dnsmasq
     image: andyshinn/dnsmasq
     pull: true
+
     #auto_remove: true
     network_mode: host
     state: started
