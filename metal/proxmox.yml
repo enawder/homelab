@@ -15,4 +15,13 @@
         - clock.nyc.he.net
     - role: lae.proxmox
       pve_group: all
-      pve_reboot_on_kernel_update: true
+      pve_reboot_on_kernel_update: false
+      pve_users:
+        - name: "{{ansible_user}}@pam"
+      pve_acls:
+        - path: "/"
+          roles:
+            - Administrator
+          users:
+            - "{{ansible_user}}@pam"
+      pve_zfs_enabled: true
