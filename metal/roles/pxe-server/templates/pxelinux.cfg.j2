@@ -5,4 +5,4 @@ default install
 label install
   kernel http://{{ansible_default_ipv4.address}}/debian-installer/amd64/linux
   initrd http://{{ansible_default_ipv4.address}}/debian-installer/amd64/initrd.gz
-  append netcfg/get_hostname={{hostvars['server'].inventory_hostname}} netcfg/get_domain=homelab preseed/url=http://{{ansible_default_ipv4.address}}/preseed.cfg auto=true vga=788 -- quiet
+  append theme=dark netcfg/choose_interface={{hostvars[item].interface}} netcfg/get_hostname={{hostvars[item].inventory_hostname}} netcfg/get_domain=homelab preseed/url=http://{{ansible_default_ipv4.address}}/preseed.cfg/{{hostvars[item].pxe_mac}} auto=true vga=788 -- quiet
